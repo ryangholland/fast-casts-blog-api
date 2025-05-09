@@ -22,3 +22,24 @@ export const getPublishedPosts = async (page = 1, limit = 10) => {
 
   return posts;
 };
+
+export const getPostByIdService = async (id) => {
+  const post = await prisma.post.findUnique({
+    where: { id },
+    include: {
+      author: {
+        select: {
+          id: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  // Only return post if it's published
+  if (!post || !post.published) {
+    return null;
+  }
+
+  return post;
+};
