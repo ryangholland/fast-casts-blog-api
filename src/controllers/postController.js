@@ -1,4 +1,7 @@
-import { getPublishedPosts } from "../services/postService.js";
+import {
+  getPublishedPosts,
+  getPostByIdService,
+} from "../services/postService.js";
 
 export const getAllPosts = async (req, res) => {
   try {
@@ -13,8 +16,24 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
+export const getPostById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const post = await getPostByIdService(id);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.json(post);
+  } catch (err) {
+    console.error("Error fetching post by ID:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 // To Do
-export const getPostById = () => {};
 export const createPost = () => {};
 export const updatePost = () => {};
 export const deletePost = () => {};
