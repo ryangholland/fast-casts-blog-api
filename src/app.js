@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import authRoutes from "./routes/authRoutes.js";
+import postRoutes from "./routes/postRoutes.js";
 
 dotenv.config();
 
@@ -18,5 +19,8 @@ app.get("/", (req, res) => {
 
 // Register /auth routes
 app.use("/auth", authRoutes);
+
+// Register /posts routes
+app.use("/posts", postRoutes);
 
 export default app;
