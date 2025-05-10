@@ -3,6 +3,7 @@ import {
   getPostByIdService,
   createPostService,
   updatePostService,
+  deletePostService,
 } from "../services/postService.js";
 
 export const getAllPosts = async (req, res) => {
@@ -77,5 +78,19 @@ export const updatePost = async (req, res) => {
   }
 };
 
-// To Do
-export const deletePost = () => {};
+export const deletePost = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deleted = await deletePostService(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.status(204).send(); // No Content
+  } catch (err) {
+    console.error("Error deleting post:", err);
+    res.status(500).json({ message: "Failed to delete post" });
+  }
+};
