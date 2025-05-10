@@ -2,6 +2,7 @@ import {
   getPublishedPosts,
   getPostByIdService,
   createPostService,
+  updatePostService,
 } from "../services/postService.js";
 
 export const getAllPosts = async (req, res) => {
@@ -53,6 +54,28 @@ export const createPost = async (req, res) => {
   }
 };
 
+export const updatePost = async (req, res) => {
+  const { id } = req.params;
+  const { title, content, excerpt, published } = req.body;
+
+  try {
+    const updatedPost = await updatePostService(id, {
+      title,
+      content,
+      excerpt,
+      published: !!published,
+    });
+
+    if (!updatedPost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.json(updatedPost);
+  } catch (err) {
+    console.error("Error updating post:", err);
+    res.status(500).json({ message: "Failed to update post" });
+  }
+};
+
 // To Do
-export const updatePost = () => {};
 export const deletePost = () => {};
