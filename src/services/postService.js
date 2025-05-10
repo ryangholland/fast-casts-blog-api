@@ -43,3 +43,31 @@ export const getPostByIdService = async (id) => {
 
   return post;
 };
+
+export const createPostService = async ({
+  title,
+  content,
+  excerpt,
+  published,
+  authorId,
+}) => {
+  const post = await prisma.post.create({
+    data: {
+      title,
+      content,
+      excerpt,
+      published,
+      authorId,
+    },
+    include: {
+      author: {
+        select: {
+          id: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  return post;
+};
