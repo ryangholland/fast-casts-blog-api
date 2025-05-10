@@ -1,5 +1,5 @@
 import express from "express";
-import { loginUser } from "../controllers/authController.js";
+import { loginUser, getMe } from "../controllers/authController.js";
 import { authenticate } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -14,5 +14,8 @@ router.get("/protected", authenticate, (req, res) => {
     user: req.user,
   });
 });
+
+// GET /auth/me
+router.get("/me", authenticate, getMe)
 
 export default router;

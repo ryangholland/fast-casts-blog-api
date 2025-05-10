@@ -34,3 +34,17 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getMe = async (req, res) => {
+  try {
+    const user = req.user; 
+
+    res.json({
+      userId: user.userId,
+      email: user.email,
+    });
+  } catch (error) {
+    console.error("Error getting user info:", error);
+    res.status(500).json({ message: "Failed to retrieve user info" });
+  }
+};
