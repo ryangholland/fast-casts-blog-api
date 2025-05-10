@@ -11,11 +11,14 @@ import { authenticate } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+// Admin Routes (must be above /:id to avoid conflicts)
+router.get("/admin", authenticate, getAllPostsAdmin);
+
 // Public Routes
 router.get("/", getAllPosts);
 router.get("/:id", getPostById);
 
-// Admin Routes (protected)
+// Admin Routes (continued)
 router.post("/", authenticate, createPost);
 router.put("/:id", authenticate, updatePost);
 router.delete("/:id", authenticate, deletePost);
