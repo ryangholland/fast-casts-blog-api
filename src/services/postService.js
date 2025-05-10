@@ -71,3 +71,29 @@ export const createPostService = async ({
 
   return post;
 };
+
+export const updatePostService = async (id, data) => {
+  try {
+    const post = await prisma.post.update({
+      where: { id },
+      data,
+      include: {
+        author: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    return post;
+  } catch (err) {
+    if (err.code === "P2025") {
+      // Record not found
+      return null;
+    }
+
+    throw err;
+  }
+};
