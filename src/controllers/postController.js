@@ -1,5 +1,6 @@
 import {
   getPublishedPosts,
+  getAllPostsService,
   getPostByIdService,
   createPostService,
   updatePostService,
@@ -16,6 +17,19 @@ export const getAllPosts = async (req, res) => {
   } catch (err) {
     console.error("Error fetching posts:", err);
     res.status(500).json({ message: err.message });
+  }
+};
+
+export const getAllPostsAdmin = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const posts = await getAllPostsService(page, limit);
+
+    res.json(posts);
+  } catch (error) {
+    console.error("Error fetching admin posts:", error);
+    res.status(500).json({ message: "Failed to fetch posts" });
   }
 };
 

@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getAllPostsAdmin,
   getAllPosts,
   getPostById,
   createPost,
