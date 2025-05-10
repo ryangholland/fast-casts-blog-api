@@ -97,3 +97,20 @@ export const updatePostService = async (id, data) => {
     throw err;
   }
 };
+
+export const deletePostService = async (id) => {
+  try {
+    await prisma.post.delete({
+      where: { id },
+    });
+
+    return true;
+  } catch (err) {
+    if (err.code === "P2025") {
+      // Record not found
+      return false;
+    }
+
+    throw err;
+  }
+};
