@@ -22,72 +22,88 @@ const seed = async () => {
     console.log("User already exists:", user.email);
   }
 
-  const existingTag = await prisma.tag.findUnique({
-    where: { slug: "javascript" },
-  });
-
-  if (!existingTag) {
-    const tag = await prisma.tag.create({
-      data: {
-        name: "JavaScript",
-        slug: "javascript",
-      },
-    });
-    console.log("Tag created:", tag);
-  } else {
-    console.log("Tag already exists:", existingTag.name);
-  }
-
-  // Add more tags
+  // Create 3 tags
   const tagData = [
+    { name: "JavaScript", slug: "javascript" },
     { name: "React", slug: "react" },
     { name: "Node.js", slug: "node-js" },
   ];
 
   for (const tag of tagData) {
-    const existing = await prisma.tag.findUnique({ where: { slug: tag.slug } });
-    if (!existing) {
-      await prisma.tag.create({ data: tag });
-      console.log("Tag created:", tag);
-    } else {
-      console.log("Tag already exists:", existing.slug);
-    }
+    await prisma.tag.upsert({
+      where: { slug: tag.slug },
+      update: {},
+      create: tag,
+    });
   }
 
-  // Create a post authored by the admin
-  const post = await prisma.post.create({
-    data: {
-      title: "Intro to React",
-      content: "This is a post about React. It covers the basics.",
-      excerpt: "Learn the basics of React...",
-      published: true,
-      authorId: user.id,
-      tags: {
-        connect: [{ slug: "react" }, { slug: "javascript" }],
+  // Fetch all tags for reuse
+  const allTags = await prisma.tag.findMany();
+
+  // Create 3 posts with varying tag combinations
+  const posts = await Promise.all([
+    prisma.post.create({
+      data: {
+        title: "Post with all tags",
+        content: "Covers JS, React, and Node.js",
+        excerpt: "Everything you need to know...",
+        published: true,
+        authorId: user.id,
+        tags: { connect: allTags.map((tag) => ({ id: tag.id })) },
       },
-    },
+    }),
+    prisma.post.create({
+      data: {
+        title: "Post with 2 tags",
+        content: "Covers just JavaScript and React",
+        excerpt: "React and JS overview...",
+        published: true,
+        authorId: user.id,
+        tags: {
+          connect: allTags
+            .filter((tag) => tag.slug !== "node-js")
+            .map((tag) => ({ id: tag.id })),
+        },
+      },
+    }),
+    prisma.post.create({
+      data: {
+        title: "Post with 1 tag",
+        content: "Only JavaScript here.",
+        excerpt: "JS-focused content...",
+        published: true,
+        authorId: user.id,
+        tags: {
+          connect: allTags
+            .filter((tag) => tag.slug === "javascript")
+            .map((tag) => ({ id: tag.id })),
+        },
+      },
+    }),
+  ]);
+
+  // Create comments: 2 on post[0], 1 on post[1], none on post[2]
+  await prisma.comment.createMany({
+    data: [
+      {
+        name: "Alice",
+        content: "This was super helpful!",
+        postId: posts[0].id,
+      },
+      {
+        name: "Bob",
+        content: "Nice breakdown, thanks!",
+        postId: posts[0].id,
+      },
+      {
+        name: "Charlie",
+        content: "Looking forward to more.",
+        postId: posts[1].id,
+      },
+    ],
   });
-  console.log("Post created:", post);
 
-  // Add comments
-  await prisma.comment.create({
-    data: {
-      name: "Jane Doe",
-      content: "Great post! Helped me get started.",
-      postId: post.id,
-    },
-  });
-
-  await prisma.comment.create({
-    data: {
-      name: "John Smith",
-      content: "Looking forward to more posts like this.",
-      postId: post.id,
-    },
-  });
-
-  console.log("Comments added.");
-
+  console.log("Tags, posts, and comments seeded.");
   await prisma.$disconnect();
 };
 
