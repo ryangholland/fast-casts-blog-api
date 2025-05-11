@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -15,15 +15,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  posts     Post[]
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+  posts    Post[]
 }
 
 model Post {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   title     String
   content   String
   excerpt   String
@@ -33,4 +32,24 @@ model Post {
 
   authorId String
   author   User   @relation(fields: [authorId], references: [id])
+
+  tags     Tag[]
+  comments Comment[]
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  slug  String @unique
+  posts Post[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  name      String
+  content   String
+  createdAt DateTime @default(now())
+
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int
 }
