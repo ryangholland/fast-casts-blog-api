@@ -18,6 +18,9 @@ export const getPublishedPosts = async (page = 1, limit = 10) => {
           email: true,
         },
       },
+      _count: {
+        select: { comments: true },
+      },
     },
   });
 
@@ -49,6 +52,9 @@ export async function getPublishedPostsByTagSlug(slug, page = 1, limit = 10) {
           email: true,
         },
       },
+      _count: {
+        select: { comments: true },
+      },
     },
   });
 }
@@ -68,6 +74,9 @@ export const getAllPostsService = async (page = 1, limit = 10) => {
           email: true,
         },
       },
+      _count: {
+        select: { comments: true },
+      },
     },
   });
 
@@ -83,6 +92,11 @@ export const getPostByIdService = async (id) => {
         select: {
           id: true,
           email: true,
+        },
+      },
+      comments: {
+        orderBy: {
+          createdAt: "desc",
         },
       },
     },
