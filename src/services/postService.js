@@ -76,7 +76,7 @@ export const getAllPostsService = async (page = 1, limit = 10) => {
 
 export const getPostByIdService = async (id) => {
   const post = await prisma.post.findUnique({
-    where: { id },
+    where: { id: Number(id) },
     include: {
       tags: true,
       author: {
@@ -128,7 +128,7 @@ export const createPostService = async ({
 export const updatePostService = async (id, data) => {
   try {
     const post = await prisma.post.update({
-      where: { id },
+      where: { id: Number(id) },
       data,
       include: {
         tags: true,
@@ -155,7 +155,7 @@ export const updatePostService = async (id, data) => {
 export const deletePostService = async (id) => {
   try {
     await prisma.post.delete({
-      where: { id },
+      where: { id: Number(id) },
     });
 
     return true;
