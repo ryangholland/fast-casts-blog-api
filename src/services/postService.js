@@ -11,6 +11,7 @@ export const getPublishedPosts = async (page = 1, limit = 10) => {
     skip,
     take: limit,
     include: {
+      tags: true,
       author: {
         select: {
           id: true,
@@ -35,15 +36,13 @@ export async function getPublishedPostsByTagSlug(slug, page = 1, limit = 10) {
         },
       },
     },
-    include: {
-      tags: true,
-    },
     orderBy: {
       createdAt: "desc",
     },
     skip,
     take: limit,
     include: {
+      tags: true,
       author: {
         select: {
           id: true,
@@ -62,6 +61,7 @@ export const getAllPostsService = async (page = 1, limit = 10) => {
     skip,
     take: limit,
     include: {
+      tags: true,
       author: {
         select: {
           id: true,
@@ -78,6 +78,7 @@ export const getPostByIdService = async (id) => {
   const post = await prisma.post.findUnique({
     where: { id },
     include: {
+      tags: true,
       author: {
         select: {
           id: true,
@@ -111,6 +112,7 @@ export const createPostService = async ({
       authorId,
     },
     include: {
+      tags: true,
       author: {
         select: {
           id: true,
@@ -129,6 +131,7 @@ export const updatePostService = async (id, data) => {
       where: { id },
       data,
       include: {
+        tags: true,
         author: {
           select: {
             id: true,
