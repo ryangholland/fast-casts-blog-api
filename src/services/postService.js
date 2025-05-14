@@ -23,6 +23,37 @@ export const getPublishedPosts = async (page = 1, limit = 10) => {
   return posts;
 };
 
+export async function getPublishedPostsByTagSlug(slug, page = 1, limit = 10) {
+  const skip = (page - 1) * limit;
+
+  return prisma.post.findMany({
+    where: {
+      published: true,
+      tags: {
+        some: {
+          slug: slug,
+        },
+      },
+    },
+    include: {
+      tags: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    skip,
+    take: limit,
+    include: {
+      author: {
+        select: {
+          id: true,
+          email: true,
+        },
+      },
+    },
+  });
+}
+
 export const getAllPostsService = async (page = 1, limit = 10) => {
   const skip = (page - 1) * limit;
 

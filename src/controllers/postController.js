@@ -1,5 +1,6 @@
 import {
   getPublishedPosts,
+  getPublishedPostsByTagSlug,
   getAllPostsService,
   getPostByIdService,
   createPostService,
@@ -8,10 +9,14 @@ import {
 } from "../services/postService.js";
 
 export const getAllPosts = async (req, res) => {
+  const { tag } = req.query;
+
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const posts = await getPublishedPosts(page, limit);
+    const posts = tag
+      ? await getPublishedPostsByTagSlug(tag, page, limit)
+      : await getPublishedPosts(page, limit);
 
     res.json(posts);
   } catch (err) {
