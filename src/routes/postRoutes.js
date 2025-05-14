@@ -7,7 +7,10 @@ import {
   updatePost,
   deletePost,
 } from "../controllers/postController.js";
-import { getCommentsByPostId } from "../controllers/commentController.js";
+import {
+  getCommentsByPostId,
+  submitComment,
+} from "../controllers/commentController.js";
 
 import { authenticate } from "../middleware/authMiddleware.js";
 
@@ -20,6 +23,7 @@ router.get("/admin", authenticate, getAllPostsAdmin);
 router.get("/", getAllPosts);
 router.get("/:id", getPostById);
 router.get("/:id/comments", getCommentsByPostId);
+router.post("/:id/comments", submitComment);
 
 // Admin Routes (continued)
 router.post("/", authenticate, createPost);
